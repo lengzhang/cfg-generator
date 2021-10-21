@@ -5,7 +5,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 enum NodeType {
-  IF, ELSE_IF, ELSE, DO_WHILE, WHILE, FOR, NONE
+  IF, ELSE_IF, ELSE, DO_WHILE, DO_WHILE_END, WHILE, WHILE_END, FOR, NONE
 }
 
 public class Node {

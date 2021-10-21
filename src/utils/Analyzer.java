@@ -27,35 +27,32 @@ public class Analyzer {
   }
 
   private Node analyse(int i, int j, Stack<Node> nodeStack) {
+    return analyse(i, j, nodeStack, createNewNode());
+  }
+
+  private Node analyse(int i, int j, Stack<Node> nodeStack, Node head) {
     System.out.println("++++++++++ analyse ++++++++++");
     System.out.println("i=" + i + "; j=" + j);
-    Node head = createNewNode();
     nodeStack.push(head);
 
     int index = i;
 
     while (i <= index && index <= j) {
-      // System.out.println("++++++++++ nodeStack ++++++++++");
-      // nodeStack.forEach((n) -> {
-      // n.print();
-      // });
-      // System.out.println("+++++++++++++++++++++++++++++++++++++++++");
-
       Statement statement = this.statements.get(index);
       NodeType type = getStatementType(statement);
 
       Node currentNode = nodeStack.pop();
 
-      if (currentNode.type != NodeType.NONE) {
-        nodeStack.push(currentNode);
-        Node tmp = createNewNode();
-        currentNode.addChild(tmp);
-        tmp.addParent(currentNode);
-        currentNode = tmp;
-      }
-
       /** IF Statement */
       if (type == NodeType.IF) {
+
+        if (currentNode.type != NodeType.NONE) {
+          Node tmp = createNewNode();
+          currentNode.addChild(tmp);
+          tmp.addParent(currentNode);
+          currentNode = tmp;
+        }
+
         currentNode.addStatement(statement);
         currentNode.type = NodeType.IF;
 
@@ -80,9 +77,6 @@ public class Analyzer {
             blockHeader = tmp;
           }
           pos = findClosedParenthesis(index);
-          // for (int a = index + 1; a <= pos - 1; a++) {
-          // System.out.println("++" + this.statements.get(a));
-          // }
           result = new Stack<>();
           Node subHeader = analyse(index + 1, pos - 1, result);
 
@@ -109,30 +103,87 @@ public class Analyzer {
       }
       /** WHILE Statement */
       else if (type == NodeType.WHILE) {
+        if (currentNode.type != NodeType.NONE
+            || (currentNode.type == NodeType.NONE && currentNode.getStatements().size() > 0)) {
+          Node tmp = createNewNode();
+          currentNode.addChild(tmp);
+          tmp.addParent(currentNode);
+          currentNode = tmp;
+        }
         currentNode.addStatement(statement);
         currentNode.type = NodeType.WHILE;
 
         /** Get the code block inside while loop */
         int pos = findClosedParenthesis(index);
         Stack<Node> result = new Stack<>();
-        Node subHeader = analyse(index + 1, pos - 1, result);
-        currentNode.addChild(subHeader);
-        subHeader.addParent(currentNode);
-
-        /** Create Close Parenthesis Node */
-        Node closeParenthesisNode = createNewNode();
-        closeParenthesisNode.addStatement(this.statements.get(pos));
-        currentNode.addChild(closeParenthesisNode);
-        closeParenthesisNode.addParent(currentNode);
-        while (!result.isEmpty()) {
-          Node n = result.pop();
-          n.addChild(closeParenthesisNode);
-          closeParenthesisNode.addParent(n);
+        Node subHeader = analyse(index + 1, pos - 1, result, currentNode);
+        if (currentNode.getId() != subHeader.getId()) {
+          currentNode.addChild(subHeader);
+          subHeader.addParent(currentNode);
         }
 
-        nodeStack.push(closeParenthesisNode);
+        /** Create end node for close parenthesis */
+        Node endNode = createNewNode();
+        endNode.addStatement(this.statements.get(pos));
+        endNode.addChild(currentNode);
+        currentNode.addParent(endNode);
+        while (!result.isEmpty()) {
+          Node n = result.pop();
+          n.addChild(endNode);
+          endNode.addParent(n);
+        }
+
+        nodeStack.push(currentNode);
+        currentNode.type = NodeType.WHILE_END;
         index = pos;
-      } else {
+      }
+      /** DO WHILE statement */
+      else if (type == NodeType.DO_WHILE) {
+
+        if (currentNode.type != NodeType.NONE
+            || (currentNode.type == NodeType.NONE && currentNode.getStatements().size() > 0)) {
+          Node tmp = createNewNode();
+          currentNode.addChild(tmp);
+          tmp.addParent(currentNode);
+          currentNode = tmp;
+        }
+        currentNode.addStatement(statement);
+        currentNode.type = NodeType.DO_WHILE;
+
+        /** Get the code block inside do while loop */
+        int pos = findClosedParenthesis(index);
+        Stack<Node> result = new Stack<>();
+        Node subHeader = analyse(index + 1, pos - 1, result, currentNode);
+        if (currentNode.getId() != subHeader.getId()) {
+          currentNode.addChild(subHeader);
+          subHeader.addParent(currentNode);
+        }
+
+        /** Create end node for WHILE statement with close parenthesis */
+        Node endNode = createNewNode();
+        endNode.addStatement(this.statements.get(pos));
+        endNode.type = NodeType.DO_WHILE_END;
+        endNode.addChild(currentNode);
+        currentNode.addParent(endNode);
+        while (!result.isEmpty()) {
+          Node n = result.pop();
+          n.addChild(endNode);
+          endNode.addParent(n);
+        }
+
+        nodeStack.push(endNode);
+        index = pos;
+      }
+      /** Others */
+      else {
+
+        if (currentNode.type != NodeType.NONE && currentNode.type != NodeType.DO_WHILE
+            && currentNode.type != NodeType.WHILE) {
+          Node tmp = createNewNode();
+          currentNode.addChild(tmp);
+          tmp.addParent(currentNode);
+          currentNode = tmp;
+        }
         currentNode.addStatement(statement);
         nodeStack.push(currentNode);
       }
