@@ -16,7 +16,7 @@ public class App {
         ArrayList<ArrayList<Statement>> methods = methodFinder.findMethods(lines);
 
         /** Analyse Methods */
-        Analyzer analyzer = new Analyzer(methods.get(1));
+        Analyzer analyzer = new Analyzer(methods.get(0));
         analyzer.analyse();
 
         System.out.println("+++++++++++++");

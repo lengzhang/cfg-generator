@@ -1,26 +1,19 @@
 public class Test {
-  public static int minFunction(int a, int b) {
-    int min = a;
-    if (a > b) {
-      min = a;
-    } else if (a < b) {
-      min = b;
-      if (a > b) {
-        min = a;
-      } else if (a < b) {
-        min = b;
-      }
-    } else {
-      min = b;
-      if (a > b) {
-        min = a;
-      } else {
-        min = b;
-      }
-      min = b;
-    }
+  public static int test0(int a, int b) {
+    int i = a, j = b;
+    int sum = 0;
+    if (i != j) {
+      sum += a;
+      while (i <= j) {
 
-    return min;
+        if (i != j) {
+
+          sum += a;
+          a++;
+        }
+      }
+    }
+    return sum;
   }
 
   public static int test1() {

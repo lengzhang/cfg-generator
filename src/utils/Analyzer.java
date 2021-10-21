@@ -27,8 +27,8 @@ public class Analyzer {
   }
 
   private Node analyse(int i, int j, Stack<Node> nodeStack) {
-    // System.out.println("++++++++++ analyse ++++++++++");
-    // System.out.println("i=" + i + "; j=" + j);
+    System.out.println("++++++++++ analyse ++++++++++");
+    System.out.println("i=" + i + "; j=" + j);
     Node head = createNewNode();
     nodeStack.push(head);
 
@@ -46,26 +46,16 @@ public class Analyzer {
 
       Node currentNode = nodeStack.pop();
 
+      if (currentNode.type != NodeType.NONE) {
+        nodeStack.push(currentNode);
+        Node tmp = createNewNode();
+        currentNode.addChild(tmp);
+        tmp.addParent(currentNode);
+        currentNode = tmp;
+      }
+
+      /** IF Statement */
       if (type == NodeType.IF) {
-        if (currentNode.type != NodeType.NONE) {
-          nodeStack.push(currentNode);
-          Node tmp = createNewNode();
-          tmp.addParent(currentNode);
-          currentNode.addChild(tmp);
-          currentNode = tmp;
-        }
-        // else if (currentNode.isClosed) {
-        // nodeStack.push(currentNode);
-        // Node tmp = createNewNode();
-        // tmp.addParent(currentNode);
-        // currentNode.addChild(tmp);
-        // while (!nodeStack.isEmpty()) {
-        // currentNode = nodeStack.pop();
-        // currentNode.addChild(tmp);
-        // tmp.addParent(currentNode);
-        // }
-        // currentNode = tmp;
-        // }
         currentNode.addStatement(statement);
         currentNode.type = NodeType.IF;
 
@@ -103,11 +93,9 @@ public class Analyzer {
           type = getStatementType(statement);
         }
 
-        // System.out.println("++" + statement);
-
+        /** Create Close Parenthesis Node */
         Node closeParenthesisNode = createNewNode();
         closeParenthesisNode.addStatement(statement);
-        // closeParenthesisNode.isClosed = true;
         blockHeader.addChild(closeParenthesisNode);
         closeParenthesisNode.addParent(blockHeader);
         while (!result.isEmpty()) {
@@ -118,26 +106,33 @@ public class Analyzer {
 
         nodeStack.push(closeParenthesisNode);
 
-      } else {
-        if (currentNode.type != NodeType.NONE) {
-          nodeStack.push(currentNode);
-          Node tmp = createNewNode();
-          currentNode.addChild(tmp);
-          tmp.addParent(currentNode);
-          currentNode = tmp;
+      }
+      /** WHILE Statement */
+      else if (type == NodeType.WHILE) {
+        currentNode.addStatement(statement);
+        currentNode.type = NodeType.WHILE;
+
+        /** Get the code block inside while loop */
+        int pos = findClosedParenthesis(index);
+        Stack<Node> result = new Stack<>();
+        Node subHeader = analyse(index + 1, pos - 1, result);
+        currentNode.addChild(subHeader);
+        subHeader.addParent(currentNode);
+
+        /** Create Close Parenthesis Node */
+        Node closeParenthesisNode = createNewNode();
+        closeParenthesisNode.addStatement(this.statements.get(pos));
+        currentNode.addChild(closeParenthesisNode);
+        closeParenthesisNode.addParent(currentNode);
+        while (!result.isEmpty()) {
+          Node n = result.pop();
+          n.addChild(closeParenthesisNode);
+          closeParenthesisNode.addParent(n);
         }
-        // else if (currentNode.isClosed) {
-        // nodeStack.push(currentNode);
-        // Node tmp = createNewNode();
-        // currentNode.addChild(tmp);
-        // tmp.addParent(currentNode);
-        // while (!nodeStack.isEmpty()) {
-        // currentNode = nodeStack.pop();
-        // currentNode.addChild(tmp);
-        // tmp.addParent(currentNode);
-        // }
-        // currentNode = tmp;
-        // }
+
+        nodeStack.push(closeParenthesisNode);
+        index = pos;
+      } else {
         currentNode.addStatement(statement);
         nodeStack.push(currentNode);
       }
