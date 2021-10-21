@@ -1,4 +1,28 @@
 public class Test {
+  public static int minFunction(int a, int b) {
+    int min = a;
+    if (a > b) {
+      min = a;
+    } else if (a < b) {
+      min = b;
+      if (a > b) {
+        min = a;
+      } else if (a < b) {
+        min = b;
+      }
+    } else {
+      min = b;
+      if (a > b) {
+        min = a;
+      } else {
+        min = b;
+      }
+      min = b;
+    }
+
+    return min;
+  }
+
   public static int test1() {
     int I = 1, J = 2, K = 4, M = 6, N = 8, L = 0, F, G;
     int S = I + J;
@@ -20,8 +44,9 @@ public class Test {
       F = G - M;
       N = N + 1;
     } while (N <= 20);
-    if (N < F)
+    if (N < F) {
       G = H + N;
+    }
     return G;
   }
 
@@ -33,10 +58,11 @@ public class Test {
       K = K + N;
       F = K * N;
       I = I + 1;
-      if (J < M)
+      if (J < M) {
         J = J + 2;
-      else
+      } else {
         J = J + 1;
+      }
     }
     if ((K + J) != (M + F)) {
       F = M + N;
@@ -48,18 +74,20 @@ public class Test {
       } while (N <= 20);
     } else {
       F = M - N;
-      if (F < M || G < 20)
+      if (F < M || G < 20) {
         G = M + N;
-      else
+      } else {
         G = M - N;
+      }
     }
     do {
       K = G * M;
       F = G - M;
       N = N + 1;
     } while (N <= 20);
-    if (N < F)
+    if (N < F) {
       G = H + N;
+    }
     return G;
   }
 
@@ -79,8 +107,9 @@ public class Test {
     elseF = M - N;
     do {
       K = G * M;
-      if (N < F)
+      if (N < F) {
         G = H + N;
+      }
       F = G - M;
       N = N + 1;
     } while (N <= 20);
