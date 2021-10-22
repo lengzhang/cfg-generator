@@ -1,14 +1,13 @@
 public class Test {
   public static int test0(int a, int b) {
-    int i = a, j = b;
     int sum = 0;
-    do {
-      sum += a;
-      if (a != b) {
-        a++;
+    for (int i = a, j = b; i <= j && a <= b; i++, a++) {
+      sum += i;
+      if (a) {
+        a = b;
       }
-    } while (a < b);
-    sum += a;
+      sum += 1;
+    }
     return sum;
   }
 

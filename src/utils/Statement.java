@@ -2,9 +2,9 @@ package utils;
 
 public class Statement {
   private String statement;
-  private int lineNumber;
+  private String lineNumber;
 
-  public Statement(String statement, int lineNumber) {
+  public Statement(String statement, String lineNumber) {
     this.statement = statement;
     this.lineNumber = lineNumber;
   }
@@ -13,11 +13,11 @@ public class Statement {
     return this.statement;
   }
 
-  public int getLineNumber() {
+  public String getLineNumber() {
     return this.lineNumber;
   }
 
   public String toString() {
-    return String.format("%d:%s", this.lineNumber, this.statement);
+    return String.format("%s:%s", this.lineNumber, this.statement);
   }
 }

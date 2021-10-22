@@ -26,7 +26,7 @@ public class CodeReader {
     try {
       while ((str = bufferedReader.readLine()) != null) {
         if (isNotBlankLine(str)) {
-          allLines.add(new Statement(str, lineNumber));
+          allLines.add(new Statement(str, String.valueOf(lineNumber)));
         }
         lineNumber++;
       }

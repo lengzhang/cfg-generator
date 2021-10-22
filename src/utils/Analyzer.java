@@ -174,9 +174,70 @@ public class Analyzer {
         nodeStack.push(endNode);
         index = pos;
       }
+      /** FOR statement */
+      else if (type == NodeType.FOR) {
+        System.out.println("abc: " + statement.getStatement());
+        Pattern pattern = Pattern.compile("\\(([^;]*);([^;]*);([^;]*)\\)");
+        Matcher matcher = pattern.matcher(statement.getStatement());
+
+        if (matcher.find()) {
+
+          System.out.println("matcher: " + matcher.group(0));
+          System.out.println("matcher: " + matcher.group(1).trim());
+          System.out.println("matcher: " + matcher.group(2).trim());
+          System.out.println("matcher: " + matcher.group(3).trim());
+          Statement statement1 = new Statement("\t" + matcher.group(1).trim(), statement.getLineNumber() + 'a');
+          Statement statement2 = new Statement("\t" + matcher.group(2).trim(), statement.getLineNumber() + 'b');
+          Statement statement3 = new Statement("\t" + matcher.group(3).trim(), statement.getLineNumber() + 'c');
+
+          /** Statement 1 */
+          if (currentNode.type != NodeType.NONE && currentNode.type != NodeType.DO_WHILE
+              && currentNode.type != NodeType.WHILE) {
+            Node tmp = createNewNode();
+            currentNode.addChild(tmp);
+            tmp.addParent(currentNode);
+            currentNode = tmp;
+          }
+          currentNode.addStatement(statement);
+          currentNode.addStatement(statement1);
+
+          /** Statement 2 */
+          Node conditionNode = createNewNode();
+          conditionNode.type = NodeType.FOR;
+          conditionNode.addStatement(statement);
+          conditionNode.addStatement(statement2);
+          conditionNode.addParent(currentNode);
+          currentNode.addChild(conditionNode);
+
+          /** Get the code block inside while loop */
+          int pos = findClosedParenthesis(index);
+          Stack<Node> result = new Stack<>();
+          Node subHeader = analyse(index + 1, pos - 1, result, conditionNode);
+          if (conditionNode.getId() != subHeader.getId()) {
+            conditionNode.addChild(subHeader);
+            subHeader.addParent(conditionNode);
+          }
+
+          /** Create end node for close parenthesis */
+          Node endNode = createNewNode();
+          endNode.type = NodeType.FOR_END;
+          endNode.addStatement(this.statements.get(pos));
+          endNode.addStatement(statement);
+          endNode.addStatement(statement3);
+          endNode.addChild(conditionNode);
+          conditionNode.addParent(endNode);
+          while (!result.isEmpty()) {
+            Node n = result.pop();
+            n.addChild(endNode);
+            endNode.addParent(n);
+          }
+
+          nodeStack.push(conditionNode);
+          index = pos;
+        }
+      }
       /** Others */
       else {
-
         if (currentNode.type != NodeType.NONE && currentNode.type != NodeType.DO_WHILE
             && currentNode.type != NodeType.WHILE) {
           Node tmp = createNewNode();
