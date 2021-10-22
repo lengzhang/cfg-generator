@@ -31,8 +31,6 @@ public class Analyzer {
   }
 
   private Node analyse(int i, int j, Stack<Node> nodeStack, Node head) {
-    System.out.println("++++++++++ analyse ++++++++++");
-    System.out.println("i=" + i + "; j=" + j);
     nodeStack.push(head);
 
     int index = i;
@@ -176,16 +174,10 @@ public class Analyzer {
       }
       /** FOR statement */
       else if (type == NodeType.FOR) {
-        System.out.println("abc: " + statement.getStatement());
         Pattern pattern = Pattern.compile("\\(([^;]*);([^;]*);([^;]*)\\)");
         Matcher matcher = pattern.matcher(statement.getStatement());
 
         if (matcher.find()) {
-
-          System.out.println("matcher: " + matcher.group(0));
-          System.out.println("matcher: " + matcher.group(1).trim());
-          System.out.println("matcher: " + matcher.group(2).trim());
-          System.out.println("matcher: " + matcher.group(3).trim());
           Statement statement1 = new Statement("\t" + matcher.group(1).trim(), statement.getLineNumber() + 'a');
           Statement statement2 = new Statement("\t" + matcher.group(2).trim(), statement.getLineNumber() + 'b');
           Statement statement3 = new Statement("\t" + matcher.group(3).trim(), statement.getLineNumber() + 'c');

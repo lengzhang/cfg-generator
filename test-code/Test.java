@@ -1,6 +1,7 @@
 public class Test {
   public static int test0(int a, int b) {
     int sum = 0;
+    // aaa
     for (int i = a, j = b; i <= j && a <= b; i++, a++) {
       sum += i;
       if (a) {
