@@ -1,4 +1,4 @@
-package utils;
+package com.lengzhang.utils;
 
 public class Statement {
   private String statement;

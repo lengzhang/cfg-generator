@@ -1,9 +1,11 @@
+package com.lengzhang;
+
 import java.util.ArrayList;
 
-import utils.Analyzer;
-import utils.CodeReader;
-import utils.MethodFinder;
-import utils.Statement;
+import com.lengzhang.utils.Analyzer;
+import com.lengzhang.utils.CodeReader;
+import com.lengzhang.utils.MethodFinder;
+import com.lengzhang.utils.Statement;
 
 public class App {
     public static void main(String[] args) throws Exception {

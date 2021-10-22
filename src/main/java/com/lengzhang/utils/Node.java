@@ -1,4 +1,4 @@
-package utils;
+package com.lengzhang.utils;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -84,9 +84,11 @@ public class Node {
     }
     System.out.println("Children:\t" + childrenStr);
     System.out.println("Statements:");
-    this.statements.forEach((statement) -> {
+
+    for (Statement statement : this.statements) {
       System.out.println(statement.getLineNumber() + ":" + statement.getStatement());
-    });
+    }
+
     System.out.println("isClosed:\t" + isClosed);
   }
 

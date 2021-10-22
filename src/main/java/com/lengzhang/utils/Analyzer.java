@@ -1,4 +1,4 @@
-package utils;
+package com.lengzhang.utils;
 
 import java.util.ArrayList;
 import java.util.Stack;
@@ -22,7 +22,7 @@ public class Analyzer {
   public void analyse() {
     this.initialize();
 
-    analyse(0, this.statements.size() - 1, new Stack<>());
+    analyse(0, this.statements.size() - 1, new Stack<Node>());
 
   }
 
