@@ -38,12 +38,6 @@ public class App {
             Analyzer analyzer = new Analyzer(method);
             analyzer.analyse();
 
-            // System.out.println("+++++++++++++");
-            // System.out.println(" Graph ");
-            // System.out.println("+++++++++++++");
-
-            // analyzer.printGraph();
-
             HashMap<String, MutableNode> nodeMap = new HashMap<>();
             /** Create each node */
             for (com.lengzhang.utils.Node n : analyzer.getGraph()) {
